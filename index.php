@@ -1,8 +1,11 @@
 <?php 
 
-//$url = 'date.php';
+$url = 'date.php';
 //include('conexion.php');
 //$con = conec();
+
+echo date("Y/m/d");
+
 
 ?>
 
@@ -18,6 +21,7 @@
     <script   src="https://code.jquery.com/jquery-2.2.4.min.js" 
 			  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
 			  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     
 </head>
@@ -40,39 +44,39 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputEmail4">Nombre</label>
-        <input type="text" class="form-control" id="filter_nombre" name="filter_nombre" placeholder="Nombre" require>
+        <input type="text" class="form-control" id="filter_nombre" name="filter_nombre" placeholder="Nombre" required>
       </div>
       <div class="form-group col-md-6">
         <label for="inputPassword4">Apellido</label>
-        <input type="text" class="form-control" id="filter_apellido" name="filter_apellido" placeholder="Password">
+        <input type="text" class="form-control" id="filter_apellido" name="filter_apellido" placeholder="Password" required>
       </div>
     </div>
     <div class="form-group">
       <label for="inputAddress">Tipo de mascota</label>
-      <input type="" class="form-control" id="filter_tipo_mas" name="filter_tipo_mas" placeholder="1234 Main St">
+      <input type="" class="form-control" id="filter_tipo_mas" name="filter_tipo_mas" placeholder="1234 Main St" required>
     </div>
     <div class="form-group">
       <label for="inputAddress">Correo</label>
-      <input type="email" class="form-control" id="filter_email" name="filter_email" placeholder="1234 Main St">
+      <input type="email" class="form-control" id="filter_email" name="filter_email" placeholder="1234 Main St" required>
     </div>
     <div class="form-group">
       <label for="inputAddress2">Nombre de la mascota</label>
-      <input type="text" class="form-control" id="filter_nom_mascota" name="filter_nom_mascota" placeholder="Apartment, studio, or floor">
+      <input type="text" class="form-control" id="filter_nom_mascota" name="filter_nom_mascota" placeholder="Apartment, studio, or floor" required>
     </div>
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="inputCity">Fecha</label>
-        <input type="datetime-local" class="form-control" id="filter_fecha_cita" name="filter_fecha_cita">
+        <input type="date"  class="form-control" id="filter_fecha_cita" name="filter_fecha_cita" value="<?php echo date('Y/m/d'); ?>" required> 
       </div>  
       <div class="form-group col-md-6">
         <label for="inputState">Dni</label>
-        <input type="text" class="form-control" id="filter_dni" name="filter_dni" placeholder="Dni" maxlength="8" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+        <input type="text" class="form-control" id="filter_dni" name="filter_dni" placeholder="Dni" maxlength="8" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
       </div>
       
     </div>
     
     <button type="submit" id="enviar" class="btn btn-primary">Sign in</button>
-    <!--<button type="submit" class="btn btn-primary" onclick="grid();" style="background: rgb(27, 27, 26);">redirigir</button>-->
+    <button type="submit" class="btn btn-primary" onclick="grid();" style="background: rgb(27, 27, 26);">redirigir</button>
   </form>
   <div id="mensaje"></div>
   
@@ -82,24 +86,48 @@
   
 </body>
 <script>
-  
+  var nom     = $('#filter_nombre').val().length;
+  var ape     = $('#filter_apellido').val().length;
+  var tipo    = $('#filter_tipo_mas').val().length;
+  var email   = $('#filter_email').val().length;
+  var nom_mas = $('#filter_nom_mascota').val().length;
+  var fecha   = $('#filter_fecha_cita').val().length;
+  var dni     = $('#filter_dni').val().length;
 
   $(document).on("ready", function(){
     enviardatos();
   });
 
+  
+  // falta agregar la validacion de por pardte del de js o ponerle un rolback  se vera despues
   function enviardatos(){
     $('#frm').on("submit", function(e){
       e.preventDefault();
       var ft = $(this).serialize();
-      $.ajax({
+      if(false ){
+        Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Debe de completar los campos',
+      })
+      }else{
+        $.ajax({
           "method":"POST",
           "url": "insert_citas.php",
           "data":ft
-      }).done(function( info ){
-          $('#mensaje').addClass("mostrar");
-          $('#mensaje').html(info)
-      });
+        }).done(function( info ){
+            $('#mensaje').addClass("mostrar");
+            $('#mensaje').html(info)
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Generando cita',
+              showConfirmButton: false,
+              timer: 1500
+            })
+        });
+      }
+      
     });
   }
 </script>
